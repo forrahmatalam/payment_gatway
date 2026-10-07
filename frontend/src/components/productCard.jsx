@@ -1,13 +1,16 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
+import PaymentSuccess from "./PaymentSuccess.jsx";
 
 
 const ProductCard = () => {
+  const [paymentDetails, setPaymentDetails] = useState(null);
+  const [message, setMessage] = useState("");
 
   const product = {
     name: "Premium Headphones",
     description: "High quality wireless headphones",
-    price: 49999,
+    price: 6000000,
     image:"https://imgs.search.brave.com/v48EqqcSDki1WEWtP_FByej1CFaHTOacxMeCm3z3Mho/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFmLzQ2/LzJjLzFmNDYyYzky/ZWQ3YWY0NWI2Zjg5/MWM5ZjE1NDE5ODA1/LmpwZw"
   };
 
@@ -32,7 +35,19 @@ const {data:keyData} = await axios.get("/api/payment/key")
         name: 'Rahmat Alam',
         description: 'Test Transaction',
         order_id: order.id, // This is the order_id created in the backend
-        handler: (response) => axios.post("/api/payment/verification", response),
+        handler: async (response) => {
+          try {
+            const { data } = await axios.post("/api/payment/verification", response);
+
+            if (data.success) {
+              setPaymentDetails(response);
+            } else {
+              setMessage(data.message);
+            }
+          } catch (error) {
+            setMessage(error.response?.data?.message || "Payment verification failed.");
+          }
+        },
         prefill: {
           name: 'Rahmat Alam',
           email: 'forrahmatalam@gmail.com',
@@ -42,10 +57,14 @@ const {data:keyData} = await axios.get("/api/payment/key")
           color: '#F37254'
         },
       };
-  const razorpay = new Razorpay(options);
+  const razorpay = new window.Razorpay(options);
 
     razorpay.open();
   };
+
+  if (paymentDetails) {
+    return <PaymentSuccess paymentId={paymentDetails.razorpay_payment_id} />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -77,6 +96,8 @@ const {data:keyData} = await axios.get("/api/payment/key")
           >
             Buy Now
           </button>
+
+          {message && <p className="mt-3 text-sm text-red-600" role="status">{message}</p>}
 
         </div>
 

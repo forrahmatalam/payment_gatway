@@ -47,8 +47,10 @@ export const paymentVerification = async (req, res) => {
     console.log(`rozerpay_signature - ${razorpay_signature}`);
 
     if (expectedSignature === razorpay_signature) {
-return res.redirect(`https://localhost:3000/success
-reference=${razorpay_payment_id}`);
+        return res.status(200).json({
+            message: "Payment verified successfully.",
+            success: true
+        });
     }
 
     return res.status(400).json({
