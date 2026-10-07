@@ -12,10 +12,14 @@ const ProductCard = () => {
   };
 
   const checkoutHandler = async(price) => {
-    const {data} = await axios.post("/api/payment/process",{
+
+const {data:keyData} = await axios.get("/api/payment/key")
+console.log(keyData)
+
+    const {data:orderData} = await axios.post("/api/payment/process",{
         amount:price
     })
-  console.log(data)
+  console.log(orderData)
 
   };
 
