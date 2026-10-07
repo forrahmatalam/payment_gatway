@@ -32,7 +32,7 @@ const {data:keyData} = await axios.get("/api/payment/key")
         name: 'Rahmat Alam',
         description: 'Test Transaction',
         order_id: order, // This is the order_id created in the backend
-        callback_url: '/api/paymentVerification', // Your success URL
+        callback_url:  "/api/payment/verification", // Your success URL
         prefill: {
           name: 'Rahmat Alam',
           email: 'forrahmatalam@gmail.com',

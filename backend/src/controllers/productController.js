@@ -24,3 +24,12 @@ export const getKey = async (req, res) => {
         key: process.env.RAZOR_KEY_ID
     })
 }
+
+export const paymentVerification = async (req, res) => {
+    console.log(req.body)
+    res.status(200).json({
+        message: "Payment Verification Successfully",
+        success: true,
+        order: req.body
+    })
+}
