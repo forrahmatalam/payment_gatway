@@ -14,13 +14,37 @@ const ProductCard = () => {
   const checkoutHandler = async(price) => {
 
 const {data:keyData} = await axios.get("/api/payment/key")
-console.log(keyData)
+
 
     const {data:orderData} = await axios.post("/api/payment/process",{
         amount:price
     })
-  console.log(orderData)
+    const {order} = orderData
+  console.log(order)
+  const {key} = keyData
+  console.log(key)
 
+// Initialize the Checkout object
+        const options = {
+        key: key, // Replace with your Razorpay key_id
+        amount: price, // Amount is in currency subunits.
+        currency: 'INR',
+        name: 'Rahmat Alam',
+        description: 'Test Transaction',
+        order_id: order, // This is the order_id created in the backend
+        callback_url: '/api/paymentVerification', // Your success URL
+        prefill: {
+          name: 'Rahmat Alam',
+          email: 'forrahmatalam@gmail.com',
+          contact: '9999999999'
+        },
+        theme: {
+          color: '#F37254'
+        },
+      };
+  const razorpay = new Razorpay(options);
+
+    razorpay.open();
   };
 
   return (
