@@ -1,4 +1,5 @@
 import { instance } from "../app/app.js";
+import crypto from "crypto";
 
 
 export const processPayment = async (req, res) => {
@@ -25,11 +26,33 @@ export const getKey = async (req, res) => {
     })
 }
 
+
+
 export const paymentVerification = async (req, res) => {
-    console.log(req.body)
-    res.status(200).json({
-        message: "Payment Verification Successfully",
-        success: true,
-        order: req.body
-    })
-}
+
+    const {
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature
+    } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZOR_SECRET_KEY)
+        .update(body)
+        .digest("hex");
+
+    console.log(`expectedSignature - ${expectedSignature}`);
+    console.log(`rozerpay_signature - ${razorpay_signature}`);
+
+    if (expectedSignature === razorpay_signature) {
+return res.redirect(`https://localhost:3000/success
+reference=${razorpay_payment_id}`);
+    }
+
+    return res.status(400).json({
+        message: "Payment Verification Failed",
+        success: false
+    });
+};

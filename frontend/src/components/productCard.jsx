@@ -31,8 +31,8 @@ const {data:keyData} = await axios.get("/api/payment/key")
         currency: 'INR',
         name: 'Rahmat Alam',
         description: 'Test Transaction',
-        order_id: order, // This is the order_id created in the backend
-        callback_url:  "/api/payment/verification", // Your success URL
+        order_id: order.id, // This is the order_id created in the backend
+        handler: (response) => axios.post("/api/payment/verification", response),
         prefill: {
           name: 'Rahmat Alam',
           email: 'forrahmatalam@gmail.com',
